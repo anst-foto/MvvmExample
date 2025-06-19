@@ -32,6 +32,14 @@ public class MainWindowViewModel : ViewModelBase
         get => _firstName;
         set => this.RaiseAndSetIfChanged(ref _firstName, value);
     }
+    
+    private DateTimeOffset? _birthDate;
+
+    public DateTimeOffset? BirthDate
+    {
+        get => _birthDate;
+        set => this.RaiseAndSetIfChanged(ref _birthDate, value);
+    }
 
     public ObservableCollection<Person> People { get; } = [];
 
@@ -58,6 +66,7 @@ public class MainWindowViewModel : ViewModelBase
                 Id = person.Id.ToString("D");
                 LastName = person.LastName;
                 FirstName = person.FirstName;
+                BirthDate = new DateTimeOffset(person.BirthDate);
             });
 
         var canSave = this.WhenAnyValue(
@@ -87,13 +96,15 @@ public class MainWindowViewModel : ViewModelBase
         {
             Id = Guid.NewGuid(),
             LastName = "Иванов",
-            FirstName = "Иван"
+            FirstName = "Иван",
+            BirthDate = new DateTime(1999, 1, 1)
         });
         People.Add(new Person()
         {
             Id = Guid.NewGuid(),
             LastName = "Петров",
-            FirstName = "Пётр"
+            FirstName = "Пётр",
+            BirthDate = new DateTime(2020, 2, 1)
         });
     }
 
@@ -105,7 +116,8 @@ public class MainWindowViewModel : ViewModelBase
             {
                 Id = Guid.NewGuid(),
                 LastName = LastName!,
-                FirstName = FirstName!
+                FirstName = FirstName!,
+                BirthDate = BirthDate!.Value.DateTime
             });
         }
         else
@@ -117,6 +129,7 @@ public class MainWindowViewModel : ViewModelBase
 
             person.LastName = LastName!;
             person.FirstName = FirstName!;
+            person.BirthDate = BirthDate!.Value.DateTime;
         }
 
         Clear();
@@ -140,5 +153,6 @@ public class MainWindowViewModel : ViewModelBase
         Id = null;
         LastName = null;
         FirstName = null;
+        BirthDate = null;
     }
 }

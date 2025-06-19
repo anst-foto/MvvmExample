@@ -47,18 +47,26 @@ public class Person : ReactiveObject
     public DateTime BirthDate
     {
         get => _birthDate;
-        set => this.RaiseAndSetIfChanged(ref _birthDate, value);
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _birthDate, value);
+            Age = CalculateAge();
+        }
     }
 
+    private int _age;
     public int Age
     {
-        get
-        {
-            var today = DateTime.Today;
-            var age = today.Year - _birthDate.Year;
-            if (_birthDate.Date > today.AddYears(-age)) age--;
+        get => _age;
+        set => this.RaiseAndSetIfChanged(ref _age, value);
+    }
+
+    private int CalculateAge()
+    {
+        var today = DateTime.Today;
+        var age = today.Year - _birthDate.Year;
+        if (_birthDate.Date > today.AddYears(-age)) age--;
             
-            return age;
-        }
+        return age;
     }
 }

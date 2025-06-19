@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:MvvmExample.ViewModels"
         xmlns:m="using:MvvmExample.Models"
+        xmlns:c="using:MvvmExample.Components"
         
         x:Class="MvvmExample.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -18,15 +19,10 @@
                       DataType="{x:Type m:Person}">
             <TextBlock>
                 <TextBlock.Text>
-                    <!--<MultiBinding StringFormat="{}{0}: {1} {2}">
-                        <Binding Path="ShortId"/>
-                        <Binding Path="LastName"/>
-                        <Binding Path="FirstName"/>
-                    </MultiBinding>-->
-                    
-                    <MultiBinding StringFormat="{}{0}: {1}">
+                    <MultiBinding StringFormat="{}{0}: {1}, {2} лет">
                         <Binding Path="ShortId"/>
                         <Binding Path="FullName"/>
+                        <Binding Path="Age"/>
                     </MultiBinding>
                 </TextBlock.Text>
             </TextBlock>
@@ -40,26 +36,24 @@
                  ItemTemplate="{StaticResource ItemTemplateForPeople}"
                  Grid.Column="0"/>
         
-        <StackPanel Grid.Column="1" Orientation="Vertical">
-            <StackPanel Orientation="Horizontal">
-                <Label Content="ID"
-                       Target="{Binding ElementName=InputId}"/>
-                <TextBox x:Name="InputId"
-                         Text="{Binding Id}"
+        <StackPanel Orientation="Vertical"
+                    Grid.Column="1" >
+            <c:InputText Label="ID" 
+                         Text="{Binding Id, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                          IsReadOnly="True"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Label Content="Фамилия"
-                       Target="{Binding ElementName=InputLastName}"/>
-                <TextBox x:Name="InputLastName"
-                         Text="{Binding LastName}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Label Content="Имя"
-                       Target="{Binding ElementName=InputFirstName}"/>
-                <TextBox x:Name="InputFirstName"
-                         Text="{Binding FirstName}"/>
-            </StackPanel>
+            <c:InputText Label="Фамилия"
+                         Text="{Binding LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <c:InputText Label="Имя"
+                         Text="{Binding FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            
+            <Grid ColumnDefinitions="*, 3*">
+                <Label Target="{Binding ElementName=InputDate}"
+                       Content="Дата рождения"
+                       Grid.Column="0"/>
+                <DatePicker x:Name="InputDate"
+                            SelectedDate="{Binding BirthDate}"
+                            Grid.Column="1"/>
+            </Grid>
             
             <StackPanel Orientation="Horizontal">
                 <Button Content="Сохранить"

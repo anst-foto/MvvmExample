@@ -1,0 +1,16 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             
+             x:Class="MvvmExample.Components.InputText"
+             x:Name="This">
+    <Grid ColumnDefinitions="*, 3*">
+        <Label Target="{Binding ElementName=Input}"
+               Content="{Binding ElementName=This, Path=Label}"
+               Grid.Column="0"/>
+        <TextBox x:Name="Input"
+                   Text="{Binding ElementName=This, Path=Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                   Watermark="{Binding ElementName=This, Path=Watermark}"
+                   IsReadOnly="{Binding ElementName=This, Path=IsReadOnly}"
+                   Grid.Column="1"/>
+    </Grid>
+</UserControl>
