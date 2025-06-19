@@ -1,0 +1,74 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:MvvmExample.ViewModels"
+        xmlns:m="using:MvvmExample.Models"
+        
+        x:Class="MvvmExample.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        
+        Icon="/Assets/avalonia-logo.ico"
+        Title="MvvmExample">
+
+    <Window.DataContext>
+        <vm:MainWindowViewModel/>
+    </Window.DataContext>
+
+    <Window.Resources>
+        <DataTemplate x:Key="ItemTemplateForPeople"
+                      DataType="{x:Type m:Person}">
+            <TextBlock>
+                <TextBlock.Text>
+                    <!--<MultiBinding StringFormat="{}{0}: {1} {2}">
+                        <Binding Path="ShortId"/>
+                        <Binding Path="LastName"/>
+                        <Binding Path="FirstName"/>
+                    </MultiBinding>-->
+                    
+                    <MultiBinding StringFormat="{}{0}: {1}">
+                        <Binding Path="ShortId"/>
+                        <Binding Path="FullName"/>
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+        </DataTemplate>
+    </Window.Resources>
+    
+    <Grid ColumnDefinitions="*, 3*">
+        <ListBox ItemsSource="{Binding People}"
+                 SelectedItem="{Binding SelectedPerson}"
+                 SelectionMode="Single"
+                 ItemTemplate="{StaticResource ItemTemplateForPeople}"
+                 Grid.Column="0"/>
+        
+        <StackPanel Grid.Column="1" Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="ID"
+                       Target="{Binding ElementName=InputId}"/>
+                <TextBox x:Name="InputId"
+                         Text="{Binding Id}"
+                         IsReadOnly="True"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Фамилия"
+                       Target="{Binding ElementName=InputLastName}"/>
+                <TextBox x:Name="InputLastName"
+                         Text="{Binding LastName}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Имя"
+                       Target="{Binding ElementName=InputFirstName}"/>
+                <TextBox x:Name="InputFirstName"
+                         Text="{Binding FirstName}"/>
+            </StackPanel>
+            
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Сохранить"
+                        Command="{Binding SaveCommand}"/>
+                <Button Content="Удалить"
+                        Command="{Binding DeleteCommand}"/>
+                <Button Content="Очистить"
+                        Command="{Binding ClearCommand}"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
