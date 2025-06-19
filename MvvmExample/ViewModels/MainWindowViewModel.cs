@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Text.Json;
+using DynamicData;
 using MvvmExample.Models;
 using ReactiveUI;
 
@@ -57,7 +61,7 @@ public class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel()
     {
-        Load();
+        PeopleFromJson();
 
         this.WhenAnyValue(vm => vm.SelectedPerson)
             .WhereNotNull()
@@ -90,22 +94,10 @@ public class MainWindowViewModel : ViewModelBase
         ClearCommand = ReactiveCommand.Create(Clear, canClear);
     }
 
-    private void Load()
+    private void Load(IEnumerable<Person> people)
     {
-        People.Add(new Person()
-        {
-            Id = Guid.NewGuid(),
-            LastName = "Иванов",
-            FirstName = "Иван",
-            BirthDate = new DateTime(1999, 1, 1)
-        });
-        People.Add(new Person()
-        {
-            Id = Guid.NewGuid(),
-            LastName = "Петров",
-            FirstName = "Пётр",
-            BirthDate = new DateTime(2020, 2, 1)
-        });
+        People.Clear();
+        People.AddRange(people);
     }
 
     private void Save()
@@ -132,6 +124,8 @@ public class MainWindowViewModel : ViewModelBase
             person.BirthDate = BirthDate!.Value.DateTime;
         }
 
+        PeopleToJson();
+        
         Clear();
     }
 
@@ -144,6 +138,8 @@ public class MainWindowViewModel : ViewModelBase
 
         People.Remove(person);
 
+        PeopleToJson();
+        
         Clear();
     }
 
@@ -154,5 +150,20 @@ public class MainWindowViewModel : ViewModelBase
         LastName = null;
         FirstName = null;
         BirthDate = null;
+    }
+
+    private void PeopleFromJson(string path = "people.json")
+    {
+        if (!File.Exists(path)) return;
+        
+        var json = File.ReadAllText(path);
+        var people = JsonSerializer.Deserialize<List<Person>>(json);
+        Load(people!);
+    }
+
+    private void PeopleToJson(string path = "people.json")
+    {
+        var json = JsonSerializer.Serialize(People.ToList());
+        File.WriteAllText(path, json);
     }
 }
