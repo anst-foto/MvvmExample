@@ -1,71 +1,35 @@
 ﻿using System;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 
 namespace MvvmExample.Models;
 
 public class Person : ReactiveObject
 {
-    private Guid _id;
-    public Guid Id
-    {
-        get => _id;
-        set => this.RaiseAndSetIfChanged(ref _id, value);
-    }
-    
+    [Reactive] public Guid Id { get; set; }
     public string ShortId => Id.ToString()[0..8];
     
-    private string _lastName;
-    public string LastName
-    {
-        get => _lastName;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _lastName, value);
-            FullName = $"{_lastName} {_firstName}";
-        }
-    }
-    
-    private string _firstName;
-    public string FirstName
-    {
-        get => _firstName;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _firstName, value);
-            FullName = $"{_lastName} {_firstName}";
-        }
-    }
-    
-    private string _fullName;
-    public string FullName
-    {
-        get => _fullName; 
-        set => this.RaiseAndSetIfChanged(ref _fullName, value);
-    }
-    
-    private DateTime _birthDate;
-    public DateTime BirthDate
-    {
-        get => _birthDate;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _birthDate, value);
-            Age = CalculateAge();
-        }
-    }
+    [Reactive] public string LastName { get; set; }
+    [Reactive] public string FirstName { get; set; }
+    [Reactive] public string FullName { get; set; }
+    [Reactive] public DateTime BirthDate { get; set; }
+    [Reactive] public int Age { get; set; }
 
-    private int _age;
-    public int Age
+    public Person()
     {
-        get => _age;
-        set => this.RaiseAndSetIfChanged(ref _age, value);
+        this.WhenAnyValue(p => p.BirthDate)
+            .Subscribe(d => Age = CalculateAge());
+        this.WhenAnyValue(p => p.FirstName)
+            .Subscribe(firstName => FullName = $"{LastName} {firstName}");
+        this.WhenAnyValue(p => p.LastName)
+            .Subscribe(lastName => FullName = $"{lastName} {FirstName}");
     }
 
     private int CalculateAge()
     {
         var today = DateTime.Today;
-        var age = today.Year - _birthDate.Year;
-        if (_birthDate.Date > today.AddYears(-age)) age--;
+        var age = today.Year - BirthDate.Year;
+        if (BirthDate.Date > today.AddYears(-age)) age--;
             
         return age;
     }

@@ -8,56 +8,31 @@ using System.Text.Json;
 using DynamicData;
 using MvvmExample.Models;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 
 namespace MvvmExample.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-    private string? _id;
-
-    public string? Id
-    {
-        get => _id;
-        set => this.RaiseAndSetIfChanged(ref _id, value);
-    }
-
-    private string? _lastName;
-
-    public string? LastName
-    {
-        get => _lastName;
-        set => this.RaiseAndSetIfChanged(ref _lastName, value);
-    }
-
-    private string? _firstName;
-
-    public string? FirstName
-    {
-        get => _firstName;
-        set => this.RaiseAndSetIfChanged(ref _firstName, value);
-    }
+    #region Properties
     
-    private DateTimeOffset? _birthDate;
-
-    public DateTimeOffset? BirthDate
-    {
-        get => _birthDate;
-        set => this.RaiseAndSetIfChanged(ref _birthDate, value);
-    }
-
+    [Reactive] public string? Id { get; set; }
+    [Reactive] public string? LastName { get; set; }
+    [Reactive] public string? FirstName { get; set; }
+    [Reactive] public DateTimeOffset? BirthDate { get; set; }
+    
     public ObservableCollection<Person> People { get; } = [];
+    [Reactive] public Person? SelectedPerson { get; set; }
+    
+    #endregion
 
-    private Person? _selectedPerson;
-
-    public Person? SelectedPerson
-    {
-        get => _selectedPerson;
-        set => this.RaiseAndSetIfChanged(ref _selectedPerson, value);
-    }
-
+    #region Commands
+    
     public ReactiveCommand<Unit, Unit> SaveCommand { get; }
     public ReactiveCommand<Unit, Unit> DeleteCommand { get; }
     public ReactiveCommand<Unit, Unit> ClearCommand { get; }
+    
+    #endregion
 
     public MainWindowViewModel()
     {
@@ -94,6 +69,8 @@ public class MainWindowViewModel : ViewModelBase
         ClearCommand = ReactiveCommand.Create(Clear, canClear);
     }
 
+    #region Methods
+    
     private void Load(IEnumerable<Person> people)
     {
         People.Clear();
@@ -166,4 +143,6 @@ public class MainWindowViewModel : ViewModelBase
         var json = JsonSerializer.Serialize(People.ToList());
         File.WriteAllText(path, json);
     }
+    
+    #endregion
 }
